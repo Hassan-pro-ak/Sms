@@ -26,9 +26,9 @@ def is_valid_phone(phone):
     """Validate phone number with regex for professional input handling."""
     return bool(re.match(r'^\+?\d{10,15}$', phone))
 
-# Function to display the fixed ASCII art banner with SYCHO
+# Function to display the ASCII art banner with dragon
 def display_banner():
-    """Display a custom ASCII art banner with SYCHO prominently below."""
+    """Display a custom ASCII art banner with dragon below."""
     banner = f"""
 {Back.BLACK + Fore.RED + Style.BRIGHT}/**
 {Back.BLACK + Fore.RED + Style.BRIGHT}* **********************************************************
@@ -41,13 +41,13 @@ def display_banner():
 {Back.BLACK + Fore.RED + Style.BRIGHT}* *                                                        *
 {Back.BLACK + Fore.RED + Style.BRIGHT}* *                                                        *
 {Back.BLACK + Fore.RED + Style.BRIGHT}* **********************************************************
-{Back.BLACK + Fore.RED + Style.BRIGHT}   \\____  _   _ _________ _       
-{Back.BLACK + Fore.RED + Style.BRIGHT}   / ___|| | | |__  / ___| |___  
-{Back.BLACK + Fore.RED + Style.BRIGHT}   \\___ \\| |_| | / /| |   | / __| 
-{Back.BLACK + Fore.RED + Style.BRIGHT}   ___) |  _  |/ /_| |___| \\__ \\ 
-{Back.BLACK + Fore.RED + Style.BRIGHT}   |____/|_| |_|____\\____|_|___/
+{Back.BLACK + Fore.RED + Style.BRIGHT}   /\\====>              _____
+{Back.BLACK + Fore.RED + Style.BRIGHT}   \\  \\===>         __/_  __/
+{Back.BLACK + Fore.RED + Style.BRIGHT}   /\\_/===>  ___  _/_  _/
+{Back.BLACK + Fore.RED + Style.BRIGHT}   |/ 0 0  \\/ _ \\/ _ \/
+{Back.BLACK + Fore.RED + Style.BRIGHT}   ===(_)-(_)\\___/\\___/ 
 {Back.BLACK + Fore.RED}=======================================
-{Back.BLACK + Fore.RED}         SYCHO SMS BOMBER v2.6
+{Back.BLACK + Fore.RED}         SYCHO SMS BOMBER v2.8
 {Back.BLACK + Fore.RED}=======================================
 {Back.BLACK + Fore.RED + Style.DIM}   Coded by SychoX2006 - 2025       {Style.RESET_ALL}
 {Back.BLACK + Fore.RED + Style.DIM}   Purpose: Advanced OTP Testing    {Style.RESET_ALL}
@@ -126,16 +126,17 @@ def send_otp(phone, count):
 
     print(f"{Fore.GREEN}🎯 Mission complete. {success_count}/{count} OTPs deployed.{Style.RESET_ALL}")
 
-# Main function with pro-hacker workflow
+# Main function with pro-hacker workflow and restart behavior
 def main():
     """Execute the SMS bomber with a professional hacker interface."""
     if os.path.exists(LOG_FILE):
         os.remove(LOG_FILE)  # Fresh log for new session
-    log_action("Sycho SMS Bomber v2.6 launched.")
-    display_banner()
-    if not check_key():
-        return
+    log_action("Sycho SMS Bomber v2.8 launched.")
     while True:
+        os.system("clear")  # Clear the screen for a fresh start
+        display_banner()
+        if not check_key():
+            return
         print(f"\n{Fore.RED}📱 Enter Target Phone Number (+923xxxxxxxxx): {Style.RESET_ALL}")
         phone = input().strip()
         print(f"{Fore.RED}🔢 Enter OTP Count (1-100): {Style.RESET_ALL}")
@@ -150,6 +151,7 @@ def main():
             print(f"{Fore.CYAN}👋 Exfiltration successful. Stay undetectable, SychoX2006.{Style.RESET_ALL}")
             log_action("Operation terminated by user.")
             break
+        log_action("Restarting operation with screen clear.")
 
 if __name__ == "__main__":
     try:
